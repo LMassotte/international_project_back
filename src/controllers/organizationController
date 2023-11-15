@@ -1,0 +1,57 @@
+const OrganizationModel = require('../models/organizationModel');
+
+const organizationModel = new OrganizationModel('mongodb+srv://loic:Qp6Hrg3RNE4bRg2p@internationalprojectclu.f2ktrik.mongodb.net/?retryWrites=true&w=majority');
+
+const OrganizationController = {
+    insert: async (req, res) => {
+        const { name, country } = req.body;
+        try {
+            await organizationModel.connect();
+            const database = organizationModel.client.db('international');
+            const organizationsCollection = database.collection('organizations');
+
+            const existingOrganization = await organizationModel.findOne({ name });
+
+            if (existingOrganization) {
+                res.status(400).json({ success: false, message: 'Organization already exists' });
+                return;
+            }
+
+            const result = await organizationsCollection.insertOne({
+                name,
+                country,
+            });
+            res.status(200).json({ success: true, message: 'Organization added successfully' });
+
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            res.status(500).send('Internal Server Error');
+        }
+    },
+
+    getByName: async (req, res) => {
+        const { name, country } = req.body;
+        try {
+            await organizationModel.connect();
+
+            const existingOrganization = await organizationModel.findOne({ name, country });
+
+            res.json({ existingOrganization: existingOrganization ? existingOrganization : null });
+        } catch (error) {
+            res.status(500).send('Internal Server Error');
+        }
+    },
+
+    getOrganizations: async (req, res) => {
+        try {
+            await organizationModel.connect();
+            const organizations = await organizationModel.findAll();
+            res.json({ organizations });
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            res.status(500).send('Internal Server Error');
+        }
+    },
+}
+
+module.exports = OrganizationController;

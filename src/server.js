@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
+const organizationRoutes = require('./routes/organizationRoutes');
 const { MongoClient } = require('mongodb');
 
 const app = express();
@@ -9,6 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/users', userRoutes);
+app.use('/api/organizations', organizationRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
