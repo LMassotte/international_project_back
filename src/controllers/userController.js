@@ -16,7 +16,7 @@ const UserController = {
                 const passwordMatch = await bcrypt.compare(password, user.password);
 
                 if (passwordMatch) {
-                    res.json({ success: true, message: 'Login successful' });
+                    res.json({ email: user.email, username:user.username });
                 } else {
                     res.status(401).json({ success: false, message: 'Invalid password' });
                 }
